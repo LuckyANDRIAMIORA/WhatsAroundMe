@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { itemIcons } from "./utils/IconMap";
 import dynamic from "next/dynamic";
+import { Place } from "./types/place";
 const MyMap = dynamic(() => import('./components/MyMap'), { ssr: false });
 
 const getPlaceIcon = (place: { tags: { [key: string]: string } }) => {
@@ -24,8 +25,8 @@ const getPlaceIcon = (place: { tags: { [key: string]: string } }) => {
 export default function Home() {
   const [lat, setLat] = useState<number | null>(0);
   const [lon, setLon] = useState<number | null>(0);
-  const [OSM, setOSM] = useState<[]>([])
-  const [placeSelected, setPlaceSelected] = useState<{ lat: number, lon: number, tags: {} } | null>(null);
+  const [OSM, setOSM] = useState<Place[]>([])
+  const [placeSelected, setPlaceSelected] = useState<Place | null>(null);
   const [area, setArea] = useState<number>(500)
   const [distanceMap, setDistanceMap] = useState<Map<string, number>>(new Map<string, number>());
 
@@ -110,7 +111,7 @@ export default function Home() {
       })
       const data = await result.json();
 
-      data.elements.forEach((element: any) => {
+      data.elements.forEach((element: Place) => {
         getDistance(element.lat, element.lon)
       });
 
@@ -164,7 +165,7 @@ export default function Home() {
           <div className="p-5 overflow-y-auto h-[70%]" style={{ scrollbarWidth: "thin" }}>
             <div>
               {
-                OSM.map((place: { lat: number, lon: number, tags: { name: string, "name:ml": string, "name:fr": string, "name:en": string, amenity: string, shop: string, tourism: string, office: string, boundary: string, leisure: string, natural: string, sport: string } }, index) => (
+                OSM.map((place:Place, index) => (
                   <div className="card bg-base-100 w-96 shadow-xl mb-5" key={index}>
                     <div className="card-body">
                       <h2 className="card-title">{getPlaceIcon(place)} {place.tags.amenity || place.tags.shop || place.tags.tourism || place.tags.office || place.tags.boundary || place.tags.leisure || place.tags.natural || place.tags.sport || 'Unknown Place'}</h2>

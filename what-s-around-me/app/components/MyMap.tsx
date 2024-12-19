@@ -4,17 +4,18 @@ import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import "leaflet-routing-machine";
+import { Place } from '../types/place';
 
 interface MapProps {
   lat: number | null;
   lon: number | null;
   area: number;
-  place: { lat: number; lon: number; tags: Record<string, string> } | null;
+  place: Place | null;
 }
 
 const MyMap: React.FC<MapProps> = ({ lat, lon, area, place }) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const routingControlRef = useRef<any>(null);
+  const routingControlRef = useRef<object>(null);
 
   useEffect(() => {
     if (!mapRef.current || lat === null || lon === null) return;
@@ -32,7 +33,7 @@ const MyMap: React.FC<MapProps> = ({ lat, lon, area, place }) => {
     mainMarker.bindPopup('You are here').openPopup();
 
     // Add Circle
-    const circle = L.circle([lat, lon], { radius: area }).addTo(map);
+    L.circle([lat, lon], { radius: area }).addTo(map);
 
     // Add Place Marker
     if (place) {
